@@ -1,0 +1,126 @@
+/* =========================================================
+   極光漸層＋玻璃質感主題
+   疊加在 style.css 之上。想換回原本的樣子，
+   只要把 index.html 裡載入這個檔案的那一行刪掉即可。
+   ========================================================= */
+
+:root {
+  --cyan: #22d3ee;
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-strong: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.11);
+}
+
+body { background: #06060b; }
+
+/* ----- 極光背景：三團緩慢漂移的光暈 ----- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(130px);
+  opacity: 0.42;
+  will-change: transform;
+}
+.aurora span:nth-child(1) {
+  width: 60vmax; height: 60vmax;
+  left: -20vmax; top: -25vmax;
+  background: #5b5bf0;
+  animation: drift-a 26s ease-in-out infinite alternate;
+}
+.aurora span:nth-child(2) {
+  width: 50vmax; height: 50vmax;
+  right: -18vmax; top: 10vh;
+  background: var(--cyan);
+  opacity: 0.28;
+  animation: drift-b 32s ease-in-out infinite alternate;
+}
+.aurora span:nth-child(3) {
+  width: 55vmax; height: 55vmax;
+  left: 15vw; bottom: -35vmax;
+  background: #a855f7;
+  opacity: 0.32;
+  animation: drift-c 38s ease-in-out infinite alternate;
+}
+@keyframes drift-a { to { transform: translate(18vw, 14vh) scale(1.15); } }
+@keyframes drift-b { to { transform: translate(-22vw, 20vh) scale(0.9); } }
+@keyframes drift-c { to { transform: translate(14vw, -22vh) scale(1.1); } }
+
+/* ----- 區塊背景改為透明，讓極光透出來 ----- */
+.section--alt {
+  background: rgba(255, 255, 255, 0.018);
+  border-color: var(--glass-border);
+}
+.cta { background: none; }
+.footer { border-color: var(--glass-border); background: rgba(6, 6, 11, 0.5); }
+
+/* ----- 首屏 ----- */
+.hero__art { display: none; }
+.hero__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.hero h1 {
+  background: linear-gradient(100deg, #ffffff 30%, #b9b9ff 65%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero__points { border-color: var(--glass-border); }
+
+/* ----- 玻璃質感卡片 ----- */
+.card,
+.member,
+.chat,
+.contact__item,
+.biz,
+.about__tags li {
+  background: var(--glass);
+  border-color: var(--glass-border);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+.card:hover,
+a.contact__item:hover {
+  background: var(--glass-strong);
+  border-color: rgba(116, 116, 255, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 16px 48px rgba(91, 91, 240, 0.22);
+}
+.member--advisor { border-color: rgba(217, 178, 106, 0.6); }
+.member--lead { border-color: rgba(116, 116, 255, 0.55); }
+
+.nav { background: rgba(6, 6, 11, 0.6); border-color: var(--glass-border); }
+.chat__head, .chat__options { border-color: var(--glass-border); }
+.msg--bot { background: rgba(255, 255, 255, 0.08); }
+.pillar, .faq, .faq details, .steps, .step { border-color: var(--glass-border); }
+
+/* ----- 按鈕加上漸層與光暈 ----- */
+.btn {
+  background: linear-gradient(100deg, #5b5bf0, #7c5cf5 55%, #3aa8f0);
+  box-shadow: 0 8px 28px rgba(91, 91, 240, 0.4);
+}
+.btn:hover {
+  background: linear-gradient(100deg, #6c6cff, #8d6dff 55%, #4bb9ff);
+  box-shadow: 0 10px 34px rgba(91, 91, 240, 0.55);
+}
+.card__num, .pillar__num { color: var(--cyan); }
+
+/* ----- 手機：光暈小一點、模糊輕一點，比較省電 ----- */
+@media (max-width: 720px) {
+  .aurora span { filter: blur(60px); }
+  .nav__menu { background: rgba(6, 6, 11, 0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora span { animation: none; }
+}
