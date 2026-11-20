@@ -344,7 +344,7 @@ if (inquiryForm) {
       inquiryForm.reset();
       setStatus('已收到你的預約，我們會在兩個工作天內以 Email 回覆。', 'ok');
     } catch (err) {
-      setStatus('送出失敗，請稍後再試，或直接寄信到 hello@ever-intelligent.com。', 'error');
+      setStatus('送出失敗，請稍後再試，或直接寄信到 everintelligent.tw@gmail.com。', 'error');
     } finally {
       submitBtn.disabled = false;
     }
