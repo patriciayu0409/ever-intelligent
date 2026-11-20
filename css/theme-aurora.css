@@ -124,3 +124,12 @@ a.contact__item:hover {
 @media (prefers-reduced-motion: reduce) {
   .aurora span { animation: none; }
 }
+
+/* 預約表單也套用玻璃質感 */
+.inquiry {
+  background: var(--glass);
+  border-color: var(--glass-border);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+}
+.field input, .field select, .field textarea { border-color: var(--glass-border); }
