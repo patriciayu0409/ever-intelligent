@@ -133,3 +133,8 @@ a.contact__item:hover {
   backdrop-filter: blur(16px) saturate(140%);
 }
 .field input, .field select, .field textarea { border-color: var(--glass-border); }
+
+/* 平板也用漢堡選單時，展開的選單要有不透明底色 */
+@media (max-width: 960px) {
+  .nav__menu { background: rgba(6, 6, 11, 0.96); }
+}

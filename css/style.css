@@ -421,3 +421,66 @@ h3 { font-size: 1.15rem; font-weight: 700; }
   .inquiry__grid { grid-template-columns: 1fr; }
   .inquiry__actions .btn { width: 100%; }
 }
+
+/* ===== 語言切換（右上角） ===== */
+.brand { order: 0; }
+.nav__menu { order: 1; }
+.lang { order: 2; }
+.nav__toggle { order: 3; }
+.lang {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 20px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+.lang__icon {
+  width: 16px; height: 16px;
+  margin: 0 3px 0 6px;
+  fill: none; stroke: var(--muted); stroke-width: 1.6;
+}
+.lang a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: background 0.2s, color 0.2s;
+}
+.lang a:hover { color: var(--text); }
+.lang a[aria-current] { background: var(--accent); color: #fff; }
+
+/* 平板與手機：改用漢堡選單，語言切換固定留在右上角 */
+.brand span, .lang a { white-space: nowrap; }
+@media (max-width: 960px) {
+  .nav__toggle { display: flex; }
+  .nav__menu {
+    position: absolute; top: 64px; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 20px 20px;
+    display: none;
+    font-size: 0.95rem;
+  }
+  .nav__menu.is-open { display: flex; }
+  .nav__menu a:not(.btn) { padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .nav__menu .btn { margin-top: 16px; }
+  .lang { margin-left: auto; margin-right: 6px; }
+  .lang a { min-height: 36px; min-width: 44px; }
+}
+@media (max-width: 720px) {
+  .lang__icon { display: none; }
+}
+.biz__note { color: var(--muted); font-size: 0.8rem; padding: 0 22px 20px; margin: 0; }
+/* 英文標題比較長，給寬一點避免單字落單 */
+html[lang="en"] .hero h1 { max-width: 16em; }
