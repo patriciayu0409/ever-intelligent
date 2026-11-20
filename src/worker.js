@@ -46,6 +46,7 @@ async function handleContact(request, env) {
     role: oneLine(data.role, 40),
     topic: oneLine(data.topic, 40),
     message: clean(data.message, 2000),
+    lang: data.lang === 'en' ? 'en' : 'zh',
   };
   if (!form.name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
     return json({ ok: false, error: 'invalid_fields' }, 400);
@@ -58,6 +59,7 @@ async function handleContact(request, env) {
     ['身分', form.role || '—'],
     ['想改善的事', form.topic || '—'],
     ['想多說的話', form.message || '—'],
+    ['填寫頁面', form.lang === 'en' ? '英文網站' : '中文網站'],
   ];
   const text = rows.map(([k, v]) => `${k}：${v}`).join('\n') + '\n\n直接回覆這封信，就會寄給對方。';
   const html =
@@ -77,7 +79,7 @@ async function handleContact(request, env) {
       to: NOTIFY_TO,
       from: NOTIFY_FROM,
       replyTo: form.email,
-      subject: `【官網預約】${form.name}${form.company ? '｜' + form.company : ''}`,
+      subject: `【官網預約${form.lang === 'en' ? '・英文' : ''}】${form.name}${form.company ? '｜' + form.company : ''}`,
       text,
       html,
     });
