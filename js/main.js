@@ -263,11 +263,12 @@ async function showResult() {
 
   showOptions(
     [
-      { label: '聯絡我們，聊聊下一步', primary: true, silent: true, action: 'contact' },
+      { label: '預約諮詢，聊聊下一步', primary: true, silent: true, action: 'contact' },
       { label: '重新診斷一次', silent: true, action: 'restart' },
     ],
     (opt) => {
       if (opt.action === 'contact') {
+        if (window.prefillInquiry) window.prefillInquiry(answers);
         document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
         showOptions([{ label: '重新診斷一次', silent: true }], startChat);
       } else {
@@ -287,3 +288,65 @@ function startChat() {
 
 document.getElementById('chatRestart').addEventListener('click', startChat);
 startChat();
+
+// ---------- 3. 預約諮詢表單 ----------
+const inquiryForm = document.getElementById('inquiryForm');
+if (inquiryForm) {
+  const statusEl = document.getElementById('inquiryStatus');
+  const submitBtn = document.getElementById('inquirySubmit');
+  const openedAt = Date.now();
+
+  const setStatus = (msg, kind) => {
+    statusEl.textContent = msg;
+    statusEl.className = 'inquiry__status' + (kind ? ' is-' + kind : '');
+  };
+
+  // 從需求診斷結果帶入身分與困擾
+  const roleText = { biz: '企業主／主管', solo: '上班族／自由工作者／學生', newbie: 'AI 新手' };
+  window.prefillInquiry = (ans) => {
+    if (!ans) return;
+    if (ans.role && roleText[ans.role]) inquiryForm.role.value = roleText[ans.role];
+    if (ans.pain && !inquiryForm.message.value) {
+      inquiryForm.message.value = '需求診斷結果：' + ans.pain.title + '（' + ans.pain.label + '）';
+    }
+  };
+
+  inquiryForm.addEventListener('input', (e) => {
+    const field = e.target.closest('.field');
+    if (field) field.classList.remove('is-invalid');
+  });
+
+  inquiryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(inquiryForm).entries());
+    let firstInvalid = null;
+    [['name', data.name.trim() !== ''], ['email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())]].forEach(([key, ok]) => {
+      const field = inquiryForm[key].closest('.field');
+      field.classList.toggle('is-invalid', !ok);
+      if (!ok && !firstInvalid) firstInvalid = inquiryForm[key];
+    });
+    if (firstInvalid) {
+      setStatus('請填寫姓名與正確的 Email。', 'error');
+      firstInvalid.focus();
+      return;
+    }
+
+    submitBtn.disabled = true;
+    setStatus('送出中…');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, elapsed: Date.now() - openedAt }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || !out.ok) throw new Error(out.error || 'send failed');
+      inquiryForm.reset();
+      setStatus('已收到你的預約，我們會在兩個工作天內以 Email 回覆。', 'ok');
+    } catch (err) {
+      setStatus('送出失敗，請稍後再試，或直接寄信到 hello@ever-intelligent.com。', 'error');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+}
