@@ -1,0 +1,17 @@
+{
+  // Cloudflare 設定檔：網站名稱、後端程式位置、靜態檔案與寄信功能
+  "name": "ever-intelligent",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./",
+    "binding": "ASSETS"
+  },
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "destination_address": "everintelligent.tw@gmail.com"
+    }
+  ],
+  "observability": { "enabled": true }
+}

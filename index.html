@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>智享有限公司｜AI 導入顧問・從一個真實問題開始</title>
   <meta name="description" content="智享有限公司（Ever Intelligent Co., Ltd.）用對話陪你釐清需求，找到第一個值得用 AI 解決的問題。適合企業主、個人工作者與 AI 初學者。">
+  <script>
+    if (location.hostname.endsWith('github.io')) {
+      location.replace('https://ever-intelligent.com/' + location.hash);
+    }
+  </script>
+  <link rel="canonical" href="https://ever-intelligent.com/">
   <link rel="icon" href="images/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/theme-aurora.css">
@@ -337,13 +343,65 @@
     <!-- ===== 聯絡方式 ===== -->
     <section class="section cta" id="contact">
       <div class="container container--narrow cta__inner">
-        <p class="eyebrow">聯絡方式</p>
+        <p class="eyebrow">預約諮詢</p>
         <h2>從今天的工作開始，<br>一起找出第一個 AI 用例</h2>
-        <p class="section__lead">簡單說說你的狀況就好，不需要先準備任何資料。</p>
+        <p class="section__lead">簡單說說你的狀況就好，不需要先準備任何資料。我們會在兩個工作天內以 Email 回覆你。</p>
+
+        <form class="inquiry" id="inquiryForm" novalidate>
+          <div class="inquiry__grid">
+            <label class="field">
+              <span class="field__label">姓名 <em>必填</em></span>
+              <input type="text" name="name" autocomplete="name" maxlength="60" required>
+            </label>
+            <label class="field">
+              <span class="field__label">Email <em>必填</em></span>
+              <input type="email" name="email" autocomplete="email" maxlength="120" required>
+            </label>
+            <label class="field">
+              <span class="field__label">公司名稱</span>
+              <input type="text" name="company" autocomplete="organization" maxlength="80">
+            </label>
+            <label class="field">
+              <span class="field__label">你的身分</span>
+              <select name="role">
+                <option value="">請選擇</option>
+                <option>企業主／主管</option>
+                <option>上班族／自由工作者／學生</option>
+                <option>AI 新手</option>
+              </select>
+            </label>
+            <label class="field field--wide">
+              <span class="field__label">想改善的事</span>
+              <select name="topic">
+                <option value="">請選擇</option>
+                <option>重複的行政與報表</option>
+                <option>客服或詢問訊息</option>
+                <option>行銷內容產出</option>
+                <option>AI 搜尋能見度／網站</option>
+                <option>團隊培訓</option>
+                <option>還不確定，想先聊聊</option>
+              </select>
+            </label>
+            <label class="field field--wide">
+              <span class="field__label">想多說的話</span>
+              <textarea name="message" rows="4" maxlength="2000" placeholder="例如：每週要花半天整理報表，想知道 AI 能不能幫忙"></textarea>
+            </label>
+            <label class="field field--trap" aria-hidden="true">
+              <span>請勿填寫此欄</span>
+              <input type="text" name="website" tabindex="-1" autocomplete="off">
+            </label>
+          </div>
+          <p class="inquiry__privacy">送出即表示你同意我們使用這些資料回覆諮詢，資料不會提供給第三方。</p>
+          <div class="inquiry__actions">
+            <button class="btn" type="submit" id="inquirySubmit">送出預約</button>
+            <p class="inquiry__status" id="inquiryStatus" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+
         <div class="contact">
-          <a class="contact__item" href="mailto:everintelligent.tw@gmail.com?subject=AI%20顧問諮詢">
+          <a class="contact__item" href="mailto:hello@ever-intelligent.com?subject=AI%20顧問諮詢">
             <span class="contact__label">電子郵件</span>
-            <span class="contact__value">everintelligent.tw@gmail.com</span>
+            <span class="contact__value">hello@ever-intelligent.com</span>
           </a>
           <div class="contact__item">
             <span class="contact__label">公司地址</span>
