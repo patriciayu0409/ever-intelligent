@@ -1,7 +1,9 @@
 /* =========================================================
    智享有限公司 — 網站互動
    1. 手機選單開合
-   2. 對話式需求診斷（純前端，問答內容都寫在下方，可自行修改）
+   2. 對話式需求診斷（純前端，中文內容寫在下方；英文內容在 js/content-en.js）
+   3. 預約諮詢表單
+   4. 語言切換
    ========================================================= */
 
 // ---------- 1. 手機選單 ----------
@@ -24,14 +26,15 @@ document.getElementById('year').textContent = new Date().getFullYear();
 // ---------- 2. 需求診斷：問答內容 ----------
 // 想改題目或建議，直接改這裡的文字即可。
 
-const ROLES = [
+const ZH = {};
+ZH.ROLES = [
   { id: 'biz', label: '企業主／主管' },
   { id: 'solo', label: '上班族／自由工作者／學生' },
   { id: 'newbie', label: '我是 AI 新手，只是好奇' },
 ];
 
 // 每種身分的「困擾」選項，以及對應的建議
-const PAINS = {
+ZH.PAINS = {
   biz: {
     question: '了解！那公司目前最想改善的是哪一件事？',
     options: [
@@ -121,7 +124,7 @@ const PAINS = {
   },
 };
 
-const EXPERIENCE = {
+ZH.EXPERIENCE = {
   question: '你（或團隊）目前使用 AI 的頻率大概是？',
   options: [
     { id: 'none', label: '幾乎沒用過', tip: '你剛起步，建議每一步都從最小範圍開始，先求有感再求完整。' },
@@ -130,7 +133,7 @@ const EXPERIENCE = {
   ],
 };
 
-const PACE = {
+ZH.PACE = {
   question: '最後一題：你比較希望用哪種方式前進？',
   options: [
     { id: 'self', label: '先自己試試看', service: '工具選型與教學', serviceNote: '先照上面的步驟動手做，遇到卡關再來找我們挑工具、學用法。' },
@@ -139,6 +142,28 @@ const PACE = {
     { id: 'team', label: '想讓整個團隊一起學', service: '團隊培訓與陪跑', serviceNote: '為團隊設計實作工作坊，並在導入後持續陪伴調整。' },
   ],
 };
+
+ZH.UI = {
+  hello: '嗨！我是 AI 顧問小幫手 👋 我會問你 4 個小問題，幫你找出適合的 AI 起步方向。',
+  firstQ: '首先，哪一個最接近你的身分？',
+  thanks: '謝謝你的回答！根據你的狀況，這是我們的建議：',
+  resultTag: '你的 AI 起步建議',
+  serviceFit: '適合你的服務：',
+  book: '預約諮詢，聊聊下一步',
+  again: '重新診斷一次',
+  formRole: { biz: '企業主／主管', solo: '上班族／自由工作者／學生', newbie: 'AI 新手' },
+  formWrap: (title, label) => '需求診斷結果：' + title + '（' + label + '）',
+  invalid: '請填寫姓名與正確的 Email。',
+  sending: '送出中…',
+  sent: '已收到你的預約，我們會在兩個工作天內以 Email 回覆。',
+  failed: '送出失敗，請稍後再試，或直接寄信到 everintelligent.tw@gmail.com。',
+};
+
+// 英文內容放在 js/content-en.js，英文頁面才會載入
+const LANG = document.documentElement.lang.toLowerCase().startsWith('en') ? 'en' : 'zh';
+const TEXT = LANG === 'en' && window.SITE_TEXT_EN ? window.SITE_TEXT_EN : ZH;
+const { ROLES, PAINS, EXPERIENCE, PACE } = TEXT;
+const UI = TEXT.UI;
 
 // ---------- 2. 需求診斷：對話流程 ----------
 const chatLog = document.getElementById('chatLog');
@@ -192,8 +217,8 @@ function showOptions(options, onPick) {
 }
 
 async function askRole() {
-  await botSay('嗨！我是 AI 顧問小幫手 👋 我會問你 4 個小問題，幫你找出適合的 AI 起步方向。');
-  await botSay('首先，哪一個最接近你的身分？');
+  await botSay(UI.hello);
+  await botSay(UI.firstQ);
   showOptions(ROLES, (opt) => {
     answers.role = opt.id;
     askPain();
@@ -226,7 +251,7 @@ async function askPace() {
 }
 
 async function showResult() {
-  await botSay('謝謝你的回答！根據你的狀況，這是我們的建議：');
+  await botSay(UI.thanks);
 
   const { pain, experience, pace } = answers;
   const card = document.createElement('div');
@@ -234,7 +259,7 @@ async function showResult() {
 
   const tag = document.createElement('span');
   tag.className = 'result__tag';
-  tag.textContent = '你的 AI 起步建議';
+  tag.textContent = UI.resultTag;
 
   const title = document.createElement('h3');
   title.textContent = pain.title;
@@ -252,7 +277,7 @@ async function showResult() {
   const service = document.createElement('p');
   service.className = 'result__service';
   const strong = document.createElement('strong');
-  strong.textContent = '適合你的服務：' + pace.service;
+  strong.textContent = UI.serviceFit + pace.service;
   service.appendChild(strong);
   service.appendChild(document.createElement('br'));
   service.appendChild(document.createTextNode(pace.serviceNote));
@@ -263,14 +288,14 @@ async function showResult() {
 
   showOptions(
     [
-      { label: '預約諮詢，聊聊下一步', primary: true, silent: true, action: 'contact' },
-      { label: '重新診斷一次', silent: true, action: 'restart' },
+      { label: UI.book, primary: true, silent: true, action: 'contact' },
+      { label: UI.again, silent: true, action: 'restart' },
     ],
     (opt) => {
       if (opt.action === 'contact') {
         if (window.prefillInquiry) window.prefillInquiry(answers);
         document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-        showOptions([{ label: '重新診斷一次', silent: true }], startChat);
+        showOptions([{ label: UI.again, silent: true }], startChat);
       } else {
         startChat();
       }
@@ -302,12 +327,12 @@ if (inquiryForm) {
   };
 
   // 從需求診斷結果帶入身分與困擾
-  const roleText = { biz: '企業主／主管', solo: '上班族／自由工作者／學生', newbie: 'AI 新手' };
+  const roleText = UI.formRole;
   window.prefillInquiry = (ans) => {
     if (!ans) return;
     if (ans.role && roleText[ans.role]) inquiryForm.role.value = roleText[ans.role];
     if (ans.pain && !inquiryForm.message.value) {
-      inquiryForm.message.value = '需求診斷結果：' + ans.pain.title + '（' + ans.pain.label + '）';
+      inquiryForm.message.value = UI.formWrap(ans.pain.title, ans.pain.label);
     }
   };
 
@@ -326,27 +351,34 @@ if (inquiryForm) {
       if (!ok && !firstInvalid) firstInvalid = inquiryForm[key];
     });
     if (firstInvalid) {
-      setStatus('請填寫姓名與正確的 Email。', 'error');
+      setStatus(UI.invalid, 'error');
       firstInvalid.focus();
       return;
     }
 
     submitBtn.disabled = true;
-    setStatus('送出中…');
+    setStatus(UI.sending);
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, elapsed: Date.now() - openedAt }),
+        body: JSON.stringify({ ...data, lang: LANG, elapsed: Date.now() - openedAt }),
       });
       const out = await res.json().catch(() => ({}));
       if (!res.ok || !out.ok) throw new Error(out.error || 'send failed');
       inquiryForm.reset();
-      setStatus('已收到你的預約，我們會在兩個工作天內以 Email 回覆。', 'ok');
+      setStatus(UI.sent, 'ok');
     } catch (err) {
-      setStatus('送出失敗，請稍後再試，或直接寄信到 everintelligent.tw@gmail.com。', 'error');
+      setStatus(UI.failed, 'error');
     } finally {
       submitBtn.disabled = false;
     }
   });
 }
+
+// ---------- 4. 語言切換：切換時保留目前所在的區塊 ----------
+document.querySelectorAll('.lang a[hreflang]').forEach((a) => {
+  a.addEventListener('click', () => {
+    if (location.hash) a.href = a.href.split('#')[0] + location.hash;
+  });
+});
