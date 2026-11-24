@@ -366,8 +366,8 @@ h3 { font-size: 1.15rem; font-weight: 700; }
   * { animation: none !important; transition: none !important; }
 }
 
-/* ===== 團隊排版：第一列創辦人＋首席顧問，第二列三位顧問 ===== */
-.member { grid-column: span 2; }
+/* ===== 團隊排版：第一列創辦人＋首席顧問，其餘顧問每列兩位 ===== */
+.member { grid-column: span 3; }
 .member--lead { grid-column: span 3; order: -2; }
 .member--advisor { grid-column: span 3; order: -1; }
 @media (max-width: 960px) {
